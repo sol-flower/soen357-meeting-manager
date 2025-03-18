@@ -25,5 +25,5 @@ REACT_APP_MEASUREMENT_ID=
 Running the frontend:
 
 ```bash
-npx start
+npm start
 ```
