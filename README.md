@@ -10,7 +10,7 @@ npm i
 
 ```
 
-Modifying the env config:
+Modifying the env config -- Place the env file at the root of the project directory:
 
 ```
 REACT_APP_API_KEY=
