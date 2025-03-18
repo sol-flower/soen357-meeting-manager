@@ -13,9 +13,14 @@ export default function Home() {
         console.log(messageRef.current.value);
 
         let data = {
-            message: messageRef.current.value
+            message: messageRef.current.value.trim()
         };
         console.log(data);
+
+        if (!data.message) {
+            console.error("Message cannot be empty");
+            return;
+        }
 
         try {
             await addDoc(ref, data);
