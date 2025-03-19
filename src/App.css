@@ -29,6 +29,16 @@ body {
   background-color: rgb(243, 113, 174) !important;
 }
 
+.custom-link {
+  color: rgb(255, 150, 199) !important;
+  font-weight: bold;
+}
+
+.custom-link:hover {
+  color: rgb(243, 113, 174) !important;
+  font-weight: bolder;
+}
+
 .App-header {
   background-color: #a7b9df;
   min-height: 100vh;

@@ -59,7 +59,7 @@ export default function Home() {
 
     return (
         <>
-        <div className="font-sans flex flex-col items-center pt-14 mt-200">
+        <div className="font-sans flex flex-col items-center pt-14">
             <Typography variant="h4" className="mb-30" style={{ fontFamily: 'Quicksand, sans-serif' }}>
                 Hello {currentUser.displayName || currentUser.email}, welcome back!
             </Typography>
@@ -116,8 +116,14 @@ export default function Home() {
                 </CardContent>
             </Card>
         </div>
+    <div className='mt-8 font-sans pt-14'>
+        <Typography variant="h5" className="mb-30" style={{ fontFamily: 'Quicksand, sans-serif' }}>
+                My Groups
+        </Typography>
+    <div>
+    <EventCarousel /></div>
     </div>
-    <EventCarousel />
+    </div>
     </>
     );
 }

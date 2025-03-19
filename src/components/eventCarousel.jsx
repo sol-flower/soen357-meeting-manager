@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { firestore, auth } from '../firebase/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const EventCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const leftArrowPath = require('../assets/left_arrow.png');
+  const rightArrowPath = require('../assets/right_arrow.png');
+  let navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserGroups = async () => {
@@ -55,34 +59,44 @@ const EventCarousel = () => {
   if (groups.length === 0) return <p>No groups found.</p>;
 
   return (
-    <div className="mt-2">
-      <div className="w-11/12">
-        <div className="relative">
-          <div className="flex space-x-4">
-            {groups.slice(currentIndex, currentIndex + 3).map((group) => (
-              <div className="flex-none w-1/3 p-4 bg-white rounded-lg shadow-md" key={group.id}>
-                <h3 className="text-lg font-bold">{group.id}</h3>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex items-center justify-between mt-4 relative bottom-44">
-            <button
-              className="w-6 h-6 rounded-full bg-gray-300 relative right-4"
-              onClick={handlePrev}
-            >
-              &lt;
-            </button>
-            <button
-              className="w-6 h-6 rounded-full bg-gray-300 relative left-10"
-              onClick={handleNext}
-            >
-              &gt;
-            </button>
+    <>
+      <div className="mt-2">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="relative">
+            <div className="flex justify-center space-x-4 transition-transform duration-500 ease-in-out">
+              {groups.slice(currentIndex, currentIndex + 3).map((group) => (
+                <div
+                  className="flex-none w-60 h-60 p-4 bg-white rounded-lg shadow-md flex flex-col justify-between"
+                  key={group.id}
+                >
+                  <h3 className="text-lg font-semibold">Group ID: {group.id}</h3>
+                  {/* Button at the bottom */}
+                  <Button
+                    onClick={() => navigate(`/calendar/${group.id}`)}
+                    variant="contained"
+                    color="primary"
+                    className="custom-button"
+                    style={{ fontFamily: 'Quicksand, sans-serif' }}
+                    fullWidth
+                  >
+                    View
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <div className="flex items-center justify-center mt-4 mb-4">
+        <button onClick={handlePrev} className="mr-4">
+          <img src={leftArrowPath} alt="Prev" className="w-6 h-6" />
+        </button>
+        <button onClick={handleNext} className="ml-4">
+          <img src={rightArrowPath} alt="Next" className="w-6 h-6" />
+        </button>
+      </div>
+    </>
   );
 };
 

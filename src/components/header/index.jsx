@@ -46,13 +46,13 @@ const Header = () => {
         ) : (
           <>
             <Link
-              className="text-sm text-blue-600 font-semibold hover:text-blue-800 transition-colors"
+              className="custom-link text-sm transition-colors"
               to="/login"
             >
               Login
             </Link>
             <Link
-              className="text-sm text-blue-600 font-semibold hover:text-blue-800 transition-colors"
+              className="custom-link text-sm transition-colors"
               to="/register"
             >
               Register
