@@ -11,6 +11,8 @@ const EventCarousel = () => {
   const leftArrowPath = require('../assets/left_arrow.png');
   const rightArrowPath = require('../assets/right_arrow.png');
   let navigate = useNavigate();
+  const visibleItems = 3;
+  const gap = 16;
 
   useEffect(() => {
     const fetchUserGroups = async () => {
@@ -41,18 +43,16 @@ const EventCarousel = () => {
     fetchUserGroups();
   }, []);
 
-  useEffect(() => {
-    if (groups.length > 0 && currentIndex > groups.length - 3) {
-      setCurrentIndex(0);
-    }
-  }, [currentIndex, groups.length]);
-
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % groups.length);
+    if (currentIndex < groups.length - visibleItems) {
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+    }
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + groups.length) % groups.length);
+    if (currentIndex > 0) {
+      setCurrentIndex((prevIndex) => prevIndex - 1);
+    }
   };
 
   if (loading) return <p>Loading groups...</p>;
@@ -61,16 +61,23 @@ const EventCarousel = () => {
   return (
     <>
       <div className="mt-2">
-        <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full max-w-4xl mx-auto overflow-hidden px-4">
           <div className="relative">
-            <div className="flex justify-center space-x-4 transition-transform duration-500 ease-in-out">
-              {groups.slice(currentIndex, currentIndex + 3).map((group) => (
+            <div
+              className="flex gap-4 transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${currentIndex * (100 / visibleItems)}%)`,
+                paddingLeft: `${gap}px`,
+                paddingRight: `${gap}px`,
+              }}
+            >
+              {groups.map((group) => (
                 <div
-                  className="flex-none w-60 h-60 p-4 bg-white rounded-lg shadow-md flex flex-col justify-between"
+                  className="flex-none w-1/3 h-60 p-4 bg-white rounded-lg shadow-md flex flex-col justify-between"
                   key={group.id}
+                  style={{ minWidth: `calc(100% / ${visibleItems} - ${gap}px)` }}
                 >
                   <h3 className="text-lg font-semibold">Group ID: {group.id}</h3>
-                  {/* Button at the bottom */}
                   <Button
                     onClick={() => navigate(`/calendar/${group.id}`)}
                     variant="contained"
@@ -89,10 +96,20 @@ const EventCarousel = () => {
       </div>
 
       <div className="flex items-center justify-center mt-4 mb-4">
-        <button onClick={handlePrev} className="mr-4">
+        <button
+          onClick={handlePrev}
+          className={`carousel-arrow mr-4 ${currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          disabled={currentIndex === 0}
+        >
           <img src={leftArrowPath} alt="Prev" className="w-6 h-6" />
         </button>
-        <button onClick={handleNext} className="ml-4">
+        <button
+          onClick={handleNext}
+          className={`carousel-arrow ml-4 ${
+            currentIndex >= groups.length - visibleItems ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          disabled={currentIndex >= groups.length - visibleItems}
+        >
           <img src={rightArrowPath} alt="Next" className="w-6 h-6" />
         </button>
       </div>

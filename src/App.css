@@ -39,6 +39,18 @@ body {
   font-weight: bolder;
 }
 
+.carousel-arrow {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.carousel-arrow:hover {
+  transform: scale(1.5);
+  opacity: 0.8; 
+}
+
 .App-header {
   background-color: #a7b9df;
   min-height: 100vh;
