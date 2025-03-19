@@ -13,8 +13,24 @@
   }
 }
 
+body {
+  background-color: #fdf8f2;
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.custom-button {
+  background-color: rgb(255, 150, 199) !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+.custom-button:hover {
+  background-color: rgb(243, 113, 174) !important;
+}
+
 .App-header {
-  background-color: #282c34;
+  background-color: #a7b9df;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

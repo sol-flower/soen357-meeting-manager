@@ -1,10 +1,11 @@
 import React, { useRef } from 'react';
 import { firestore, auth } from '../firebase/firebase';
-import { collection, addDoc, doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
 import { useAuth } from '../contexts/authContext';
-import { Card, Button } from '@mui/material';
+import { Card, Button, TextField, Typography, CardContent, CardActions } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import EventCarousel from '../components/eventCarousel';
 
 export default function Home() {
     let navigate = useNavigate();
@@ -57,28 +58,66 @@ export default function Home() {
     };
 
     return (
-        <div>
-            <div className='text-2xl font-bold pt-14'>
-                Hello {currentUser.displayName ? currentUser.displayName : currentUser.email}, welcome back.
-            </div>
-
-            <div className='flex flex-row '>
-                <Card>
-                    <p>Received a Group ID? Join the Group Now!</p>
-                    <form onSubmit={joinGroup}>
-                        <label>Enter Group ID:</label>
-                        <input type="text" ref={groupIDRef} required />
-                        <Button type="submit" variant="contained">Join Group</Button>
-                    </form>
+        <>
+        <div className="font-sans flex flex-col items-center pt-14 mt-200">
+            <Typography variant="h4" className="mb-30" style={{ fontFamily: 'Quicksand, sans-serif' }}>
+                Hello {currentUser.displayName || currentUser.email}, welcome back!
+            </Typography>
+            <br></br>
+            <div className="flex space-x-6">
+            <Card className="w-80 p-6 shadow-lg">
+                    <CardContent className="flex-grow">
+                        <Typography variant="h6" style={{ fontFamily: 'Quicksand, sans-serif' }} gutterBottom>
+                            <b>Received a New Group ID?</b> <br></br>Join the Group Now!
+                        </Typography>
+                        <form onSubmit={joinGroup}>
+                            <TextField
+                                label="Enter Group ID"
+                                variant="outlined"
+                                fullWidth
+                                inputRef={groupIDRef}
+                                className="mb-4"
+                                required
+                                InputProps={{
+                                    style: { fontFamily: 'Quicksand, sans-serif' },
+                                  }}
+                                  InputLabelProps={{
+                                    style: { fontFamily: 'Quicksand, sans-serif' },
+                                  }}
+                            />
+                            <CardActions>
+                                <Button type="submit" variant="contained" className="custom-button" style={{ fontFamily: 'Quicksand, sans-serif' }} color="primary" fullWidth>
+                                    Join Group
+                                </Button>
+                            </CardActions>
+                        </form>
+                    </CardContent>
                 </Card>
 
-                <Card>
-                    <p>Or Create a New Group:</p>
-                    <Button onClick={createGroup} variant="outlined" color="primary">
+                <Card className="w-80 p-6 shadow-lg flex flex-col">
+                <CardContent className="flex-grow flex flex-col">
+                    <Typography variant="h6" gutterBottom style={{ fontFamily: 'Quicksand, sans-serif' }}>
+                    <b>Create a New Group</b>
+                    </Typography>
+                    <div className="mt-auto">
+                    <CardActions>
+                        <Button 
+                        onClick={createGroup} 
+                        variant="contained" 
+                        color="primary"
+                        className="custom-button"
+                        style={{ fontFamily: 'Quicksand, sans-serif' }}
+                        fullWidth
+                        >
                         Create Group
-                    </Button>
-                </Card>
-            </div>
+                        </Button>
+                    </CardActions>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
+    </div>
+    <EventCarousel />
+    </>
     );
 }
