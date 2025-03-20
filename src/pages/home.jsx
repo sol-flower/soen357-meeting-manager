@@ -85,7 +85,6 @@ export default function Home() {
                     </Typography>
 
                     <div className="flex space-x-6">
-                        {/* Join Group Card */}
                         <Card className="w-80 p-6 shadow-lg">
                             <CardContent className="flex-grow">
                                 <Typography variant="h6" style={{ fontFamily: 'Quicksand, sans-serif' }} gutterBottom>
@@ -137,7 +136,6 @@ export default function Home() {
                             </CardContent>
                         </Card>
 
-                        {/* Create Group Card */}
                         <Card className="w-80 p-6 shadow-lg flex flex-col">
                             <CardContent className="flex-grow flex flex-col">
                                 <Typography variant="h6" gutterBottom style={{ fontFamily: 'Quicksand, sans-serif' }}>
