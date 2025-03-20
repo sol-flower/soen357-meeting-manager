@@ -310,7 +310,7 @@ const EventCalendar = ({ groupID }) => {
                     <Button
                         onClick={handleSaveGroupName}
                         variant="contained"
-                        color="primary"
+                        className='custom-button'
                         style={{
                             fontFamily: 'Quicksand, sans-serif',
                         }}
