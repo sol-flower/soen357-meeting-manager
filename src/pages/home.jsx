@@ -81,7 +81,7 @@ export default function Home() {
                         className="mb-16"
                         style={{ fontFamily: 'Quicksand, sans-serif', color: 'white' }}
                     >
-                    Planning your next event is one step away, all you need is a group ID. Don't have one ? Create one below !
+                    Schedule coordination is one step away, all you need is a group ID. Don't have one ? Create one below !
                     </Typography>
 
                     <div className="flex space-x-6">

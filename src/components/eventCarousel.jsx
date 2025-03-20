@@ -77,6 +77,7 @@ const EventCarousel = () => {
                   key={group.id}
                   style={{ minWidth: `calc(100% / ${visibleItems} - ${gap}px)` }}
                 >
+                  <h2 className='text-xl font-bold'>{group.groupName}</h2>
                   <h3 className="text-lg font-semibold">Group ID: {group.id}</h3>
                   <Button
                     onClick={() => navigate(`/calendar/${group.id}`)}

@@ -207,7 +207,21 @@ const EventCalendar = ({ groupID }) => {
             </Typography>
 
             <div style={{ marginBottom: '16px', width: '200px' }}>
-                <FormControl variant="outlined" fullWidth>
+                <FormControl variant="outlined" fullWidth sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    borderColor: 'gray',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: 'rgb(255, 150, 199)',
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                '&.Mui-focused': {
+                                                    color: 'rgb(255, 150, 199)',
+                                                },
+                                            },
+                                        }}>
                     <InputLabel style={{ fontFamily: 'Quicksand, sans-serif' }}>Time Increment</InputLabel>
                     <Select
                         value={timeIncrement}
