@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 const localizer = momentLocalizer(moment);
 
-const EventCalendar = ({ groupID }) => {
+const EventCalendar = ({ groupID, currentUserID }) => {
     const [events, setEvents] = useState([]);
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(true);
@@ -25,8 +25,11 @@ const EventCalendar = ({ groupID }) => {
 
             if (groupSnap.exists()) {
                 const data = groupSnap.data();
-                const fetchedEvents = data.availabilities || [];
                 setName(data.groupName || '');
+
+                const members = data.members || {};
+                const currentUser = members[currentUserID];
+                const fetchedEvents = currentUser?.availabilities || [];
 
                 const formattedEvents = fetchedEvents.map(event => ({
                     ...event,
@@ -42,20 +45,19 @@ const EventCalendar = ({ groupID }) => {
         };
 
         fetchEvents();
-    }, [groupID]);
+    }, [groupID, currentUserID]);
 
-    // Function to open the name changing modal
+    // Functions for the group name modal
     const handleOpenModal = () => {
         setNewGroupName(name);
         setIsModalOpen(true);
     };
 
-    // Function to close the modal
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
 
-    // Function to save the edited group name into Firebase
+    // Function to save the group name into the db
     const handleSaveGroupName = async () => {
         if (!newGroupName.trim()) {
             alert("Group name cannot be empty!");
@@ -74,7 +76,7 @@ const EventCalendar = ({ groupID }) => {
         }
     };
 
-    // Function to merge consecutive time slots into one + to avoid overlapping
+    // Functions to merge consecutive time slots tgt bc by default rbc puts them separate + overlapping
     const mergeTimeSlots = (slots) => {
         if (slots.length === 0) return [];
 
@@ -99,12 +101,12 @@ const EventCalendar = ({ groupID }) => {
         return mergedSlots;
     };
 
-    // Handle select of rbc
+    // Function by rbc to select slots on the calendar
     const handleSelectSlot = async ({ start, end }) => {
         const newEvent = {
             start,
-            end: new Date(start.getTime() + timeIncrement * 60 * 1000),
-            title: "Available Slot"
+            end,
+            title: "Available Slot" //TODO: remove this or modify, i just kept it to remember the property exists
         };
 
         const updatedEvents = mergeTimeSlots([...events, newEvent]);
@@ -112,14 +114,20 @@ const EventCalendar = ({ groupID }) => {
 
         const groupRef = doc(firestore, 'groups', groupID);
         try {
-            await updateDoc(groupRef, { availabilities: updatedEvents });
+            // Update the current user's availabilities in the members map
+            await updateDoc(groupRef, {
+                [`members.${currentUserID}.availabilities`]: updatedEvents.map(event => ({
+                    start: event.start,
+                    end: event.end,
+                })),
+            });
         } catch (error) {
             console.error("Error updating availability:", error);
             alert("Failed to save availability.");
         }
     };
 
-    // Function to delete a slot
+    // Function to be able to remove some/the whole slot(s)
     const handleRemoveSlot = async (eventToRemove, e) => {
         const slotHeight = e.target.getBoundingClientRect().height;
         const clickY = e.nativeEvent.offsetY;
@@ -129,7 +137,7 @@ const EventCalendar = ({ groupID }) => {
         const incrementMs = timeIncrement * 60 * 1000;
 
         let updatedEvent;
-        if (slotHeight === 30 || slotHeight === 0) {
+        if (eventToRemove.end - eventToRemove.start === 30 || eventToRemove.end - eventToRemove.start === 15 || eventToRemove.end - eventToRemove.start === 0) {
             updatedEvent = null;
         } else if (fractionClicked < 0.33) {
             updatedEvent = {
@@ -153,14 +161,20 @@ const EventCalendar = ({ groupID }) => {
 
         const groupRef = doc(firestore, 'groups', groupID);
         try {
-            await updateDoc(groupRef, { availabilities: updatedEvents });
+            // Update the current user's availabilities in the members map
+            await updateDoc(groupRef, {
+                [`members.${currentUserID}.availabilities`]: updatedEvents.map(event => ({
+                    start: event.start,
+                    end: event.end,
+                })),
+            });
         } catch (error) {
             console.error("Error removing availability:", error);
             alert("Failed to remove availability.");
         }
     };
 
-    // Loading message for users
+    // Just to show a loading message if fetching is taking too long
     if (loading) return <p>Loading calendar...</p>;
 
     return (
