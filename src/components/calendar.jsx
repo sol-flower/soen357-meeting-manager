@@ -111,10 +111,9 @@ const EventCalendar = ({ groupID, currentUserID }) => {
 
         const updatedEvents = mergeTimeSlots([...events, newEvent]);
         setEvents(updatedEvents);
-
+        console.log("Update Path:", `members.${currentUserID}.availabilities`);
         const groupRef = doc(firestore, 'groups', groupID);
         try {
-            // Update the current user's availabilities in the members map
             await updateDoc(groupRef, {
                 [`members.${currentUserID}.availabilities`]: updatedEvents.map(event => ({
                     start: event.start,
@@ -161,7 +160,6 @@ const EventCalendar = ({ groupID, currentUserID }) => {
 
         const groupRef = doc(firestore, 'groups', groupID);
         try {
-            // Update the current user's availabilities in the members map
             await updateDoc(groupRef, {
                 [`members.${currentUserID}.availabilities`]: updatedEvents.map(event => ({
                     start: event.start,
@@ -264,7 +262,7 @@ const EventCalendar = ({ groupID, currentUserID }) => {
                 step={timeIncrement}
                 timeslots={timeslots}
                 showMultiDayTimes
-                style={{ height: 800 }}
+                style={{ height: (timeIncrement === 15 ? 1000 : 800)}}
             />
 
             <Modal
