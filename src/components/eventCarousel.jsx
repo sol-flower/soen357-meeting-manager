@@ -19,19 +19,20 @@ const EventCarousel = () => {
       try {
         const user = auth.currentUser;
         if (!user) return;
-
+    
         const userID = user.uid;
         console.log('Fetching groups for user:', userID);
-
+    
         const groupsRef = collection(firestore, 'groups');
-        const q = query(groupsRef, where('members', 'array-contains', userID));
-        const querySnapshot = await getDocs(q);
-
-        const userGroups = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
+        const querySnapshot = await getDocs(groupsRef);
+    
+        const userGroups = querySnapshot.docs
+          .filter((doc) => doc.data().members && doc.data().members[userID])
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+    
         console.log('Fetched groups:', userGroups);
         setGroups(userGroups);
       } catch (error) {
@@ -39,7 +40,7 @@ const EventCarousel = () => {
       }
       setLoading(false);
     };
-
+    
     fetchUserGroups();
   }, []);
 

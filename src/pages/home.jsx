@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { firestore, auth } from '../firebase/firebase';
-import { doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { doc, updateDoc, setDoc } from "firebase/firestore";
 import { useAuth } from '../contexts/authContext';
 import { Card, Button, TextField, Typography, CardContent, CardActions } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,8 +27,8 @@ export default function Home() {
 
         try {
             await updateDoc(groupRef, {
-                members: arrayUnion(userID),
-            });
+                [`members.${userID}`]: { availabilities: [] }
+              });
             alert(`Joined group ${groupID} successfully!`);
             navigate(`/calendar/${groupID}`);
         } catch (error) {
@@ -46,10 +46,13 @@ export default function Home() {
         try {
             await setDoc(groupRef, {
                 id: groupID,
-                members: [userID],
-                availabilities: [],
-                groupName: 'Untitled Group'
-            });
+                groupName: 'Untitled Group',
+                members: {
+                  [userID]: {
+                    availabilities: []
+                  }
+                }
+              });
             alert(`Group created! Your Group ID is: ${groupID}`);
             navigate(`/calendar/${groupID}`);
         } catch (error) {

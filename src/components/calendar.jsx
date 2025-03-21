@@ -3,7 +3,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { firestore } from '../firebase/firebase';
+import { auth, firestore } from '../firebase/firebase';
 import { Typography, Button, TextField, Modal, Box, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -103,6 +103,12 @@ const EventCalendar = ({ groupID, currentUserID }) => {
 
     // Function by rbc to select slots on the calendar
     const handleSelectSlot = async ({ start, end }) => {
+        if (!currentUserID || currentUserID !== auth.currentUser.uid) {
+            console.error("Current User ID is undefined.");
+            alert("User not authenticated. Please log in.");
+            return;
+        }
+
         const newEvent = {
             start,
             end,
