@@ -9,6 +9,9 @@ import CalendarPage from "./pages/calendarPage";
 
 import { AuthProvider } from "./contexts/authContext";
 import { useRoutes } from "react-router-dom";
+import AllAvailabilityPage from './pages/AllAvailabilityPage';
+
+
 
 function App() {
   const routesArray = [
@@ -32,6 +35,10 @@ function App() {
       path: "/calendar/:groupID",
       element: <CalendarPage />,
     },
+      {
+    path: "/calendar/:groupID/all",  
+    element: <AllAvailabilityPage />,
+  },
   ];
   let routesElement = useRoutes(routesArray);
   return (

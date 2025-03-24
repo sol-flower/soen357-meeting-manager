@@ -123,3 +123,8 @@ body {
   border-bottom: 1px solid rgb(255, 224, 238);
   display:block;
 }
+
+/* Hide the Time Increment dropdown only on group view page */
+.group-view-mode .MuiFormControl-root {
+  display: none !important;
+}
