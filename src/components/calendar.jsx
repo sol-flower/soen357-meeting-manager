@@ -4,8 +4,9 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, firestore } from '../firebase/firebase';
-import { Typography, Button, TextField, Modal, Box, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { Typography, Button, TextField, Modal, Box, MenuItem, Select, FormControl, InputLabel, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 const localizer = momentLocalizer(moment);
 
@@ -18,6 +19,69 @@ const EventCalendar = ({ groupID, currentUserID, isGroupView }) => {
     const [timeIncrement, setTimeIncrement] = useState(30);
     const [totalUsers, setTotalUsers] = useState(1);
     const timeslots = 60 / timeIncrement;
+
+    const generateICS = (event) => {
+        const formatDate = (date) => {
+            return moment(date).utc().format('YYYYMMDDTHHmmss[Z]');
+        };
+
+        return [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Group Availability//EN',
+            'BEGIN:VEVENT',
+            `UID:${Date.now()}@groupavailability`,
+            `DTSTAMP:${formatDate(new Date())}`,
+            `DTSTART:${formatDate(event.start)}`,
+            `DTEND:${formatDate(event.end)}`,
+            `SUMMARY:Group ${name} Availability`,
+            `DESCRIPTION:All members of ${name} are available during this time slot.`,
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\n');
+    };
+
+    const handleExportEvent = (event) => {
+        if (event.title !== "Everyone Available") return;
+        
+        const icsContent = generateICS(event);
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Group-Availability-${moment(event.start).format('YYYY-MM-DD-HHmm')}.ics`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const EventComponent = ({ event }) => {
+        if (event.title === "Everyone Available") {
+            return (
+                <div style={{ padding: '5px', height: '100%' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '50%' }}>
+                        <span>{event.title}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', justifyContent: 'center', height: '50%' }}>
+                    <IconButton 
+                            size="small" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleExportEvent(event);
+                            }}
+                            style={{ color: 'white', padding: '2px' }}
+                            title="Export to calendar"
+                        >
+                            <FileDownloadIcon fontSize="small" />
+                            <span style={{ fontSize: '0.8rem' }}>Export Slot</span>
+                        </IconButton>
+                    </div>
+                </div>
+            );
+        }
+        return <div style={{ padding: '5px' }}>{event.title}</div>;
+    };
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -209,6 +273,9 @@ const EventCalendar = ({ groupID, currentUserID, isGroupView }) => {
                 timeslots={timeslots}
                 showMultiDayTimes
                 style={{ height: timeIncrement === 15 ? 1000 : 800 }}
+                components={{
+                    event: EventComponent
+                }}
                 eventPropGetter={(event) => {
                     if (!isGroupView) return {};
                     const opacity = Math.min(0.2 + (event.count / totalUsers), 1);
